@@ -1,5 +1,5 @@
 name: Windows
-
+# kotleni 01.03.2026 - Change tests to artifacts gatchering
 on: [push, pull_request]
 
 jobs:
