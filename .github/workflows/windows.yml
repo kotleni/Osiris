@@ -1,5 +1,5 @@
 name: Windows
-# kotleni 01.03.2026 - Change tests to artifacts gatchering
+
 on: [push, pull_request]
 
 jobs:
@@ -25,13 +25,15 @@ jobs:
       shell: cmd
       run: msbuild Osiris.sln /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
 
-    - name: Upload MSBuild artifact
+    - name: Upload MSBuild artifacts
       uses: actions/upload-artifact@v4
       with:
         name: msbuild-${{ matrix.os }}-${{ matrix.toolset }}-${{ matrix.configuration }}
         path: |
-          **/x64/${{ matrix.configuration }}/Osiris*.dll
-          **/x64/${{ matrix.configuration }}/Osiris*.exe
+          **/*.dll
+          **/*.exe
+          **/*.pdb
+          **/*.lib
         if-no-files-found: error
 
   cmake:
@@ -53,13 +55,16 @@ jobs:
       run: cmake -Werror=dev -D CMAKE_COMPILE_WARNING_AS_ERROR=1 -A x64 ${{ env.toolset }} -B build
 
     - name: Build
-      run: cmake --build build --target Osiris --config ${{ matrix.configuration }}
+      run: cmake --build build --config ${{ matrix.configuration }}
 
-    - name: Upload CMake artifact
+    - name: Upload CMake artifacts
       uses: actions/upload-artifact@v4
       with:
         name: cmake-${{ matrix.os }}-${{ matrix.toolset }}-${{ matrix.configuration }}
         path: |
-          build/${{ matrix.configuration }}/Osiris*.dll
-          build/${{ matrix.configuration }}/Osiris*.exe
+          build/**
+          **/*.dll
+          **/*.exe
+          **/*.pdb
+          **/*.lib
         if-no-files-found: error
